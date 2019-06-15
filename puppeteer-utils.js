@@ -2,6 +2,45 @@ const fs = require('fs')
 const puppeteer = require('puppeteer')
 const path = require('path')
 
+const mkdir = (dir) => {
+  return new Promise((res, rej) => {
+    fs.mkdir(dir, { recursive: true }, err => {
+      if (err) {
+        rej(err)
+      } else {
+        console.log('create dir: ', dir)
+        res()
+      }
+    })
+  })
+}
+
+const writeFile = (path, text) => {
+  return new Promise((res, rej) => {
+    fs.writeFile(path, text, err => {
+      if (err) {
+        rej(err)
+      } else {
+        console.log('file saved')
+        res()
+      }
+    })
+  })
+}
+
+const readFile = (path) => {
+  return new Promise((res, rej) => {
+    fs.readFile(path, (err, data) => {
+      if (err) {
+        rej(err)
+      } else {
+        console.log('file read')
+        res(data)
+      }
+    })
+  })
+}
+
 const parseHTML = (html, userId) => {
   return `<html lang="en">
   <head>
@@ -17,21 +56,6 @@ const parseHTML = (html, userId) => {
   </html>`
 }
 
-const createFiles = async (html, css, userId, dir) => {
-  await fs.mkdir(dir, { recursive: true }, err => {
-    if (err) throw err
-    console.log('create dir: ', dir)
-  })
-  await fs.writeFile(`${dir}${userId}.html`, parseHTML(html, userId), err => {
-    if (err) throw err
-    console.log('The html has been saved!')
-  })
-  await fs.writeFile(`${dir}${userId}.css`, css, err => {
-    if (err) throw err
-    console.log('The css has been saved!')
-  })
-}
-
 const puppy = async () => {
   const args = ['-–no-sandbox', '-–disable-setuid-sandbox']
   console.log('set args')
@@ -44,7 +68,13 @@ const puppy = async () => {
   return 'hello'
 }
 
-const createImage = async (userId, challengeId, dir) => {
+const createFiles = async (html, css, userId, dir) => {
+  await mkdir(dir)
+  await writeFile(`${dir}${userId}.html`, parseHTML(html, userId))
+  await writeFile(`${dir}${userId}.css`, css)
+}
+
+const createImage = async (userId, challengeId, dir, width, height) => {
   try {
     // const image = await Image.findOne({ where: { challengeId } });
     const args = ['-–no-sandbox', '-–disable-setuid-sandbox']
@@ -52,10 +82,10 @@ const createImage = async (userId, challengeId, dir) => {
     const page = await browser.newPage()
     const retPath = `file://${path.join(process.cwd(), `${dir}${userId}.html`)}`
     await page.goto(retPath)
-    await page.setViewport({ width: image.width, height: image.height })
+    await page.setViewport({ width, height })
     await page.screenshot({ path: `${dir}${userId}.png` })
     await browser.close()
-    return retPath
+    return readFile(`${dir}${userId}.png`)
   } catch (err) {
     console.log('error from createImage: ', err)
   }
@@ -75,6 +105,13 @@ const seedImage = async (fileName, dir) => {
   } catch (err) {
     console.log('error from seedImage: ', err)
   }
+}
+
+const createFilesAndImage = async (html, css, dir, userId, challengeId, width, height) => {
+  await createFiles(html, css, userId, dir)
+  console.log('made files')
+  const data = await createImage(userId,  challengeId, dir, width, height)
+  return data
 }
 
 // /******  PREVIEW ******/
@@ -97,9 +134,9 @@ const createImagePreview = async (userId, dir, imageWidth, imageHeight) => {
 }
 
 module.exports = {
-  createFiles,
   createImage,
+  createFiles,
   createImagePreview,
-  seedImage,
-  puppy
+  puppy,
+  createFilesAndImage
 }
