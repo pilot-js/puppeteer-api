@@ -1,6 +1,6 @@
 const express = require('express')
 const puppeteer = require('puppeteer')
-const utils = require('./puppeteer-utils')
+// const utils = require('./puppeteer-utils')
 const path = require('path')
 
 const app = express()
@@ -35,7 +35,9 @@ app.post('/seed-image', async (req, res, next) => {
 
 app.get('/puppy', async (req, res, next) => {
   try {
+    console.log('puppy route')
     await utils.puppy()
+    console.log('ran successfully')
     res.sendStatus(204)
   } catch (e) {
     res.status = 500
