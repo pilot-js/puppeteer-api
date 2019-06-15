@@ -15,8 +15,7 @@ app.post('/create-image', async (req, res, next) => {
     const data = await utils.createImage(userId, challengeId, dir, width, height)
     res.send(JSON.stringify(data))
   } catch(e) {
-    res.status = 500
-    res.send(e)
+    next(e)
   }
 })
 
@@ -28,8 +27,7 @@ app.post('/seed-image', async (req, res, next) => {
     const data = await utils.createImage(userId, challengeId, dir, 600, 337)
     res.send(JSON.stringify(data))
   } catch(e) {
-    res.status = 500
-    res.send(JSON.stringify(e))
+    next(e)
   }
 })
 
@@ -40,8 +38,9 @@ app.get('/puppy', async (req, res, next) => {
     console.log('ran successfully')
     res.sendStatus(204)
   } catch (e) {
-    res.status = 500
-    res.send(JSON.stringify(e))
+    next(e)
+//  res.status = 500
+//  res.send(JSON.stringify(e))
   }
 })
 
