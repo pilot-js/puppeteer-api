@@ -11,6 +11,7 @@ app.get('*', async (req, res, next) => {
 });
 
 const port = process.env.PORT || 3001
+const egg = 'yum'
 
 app.listen(port, () => console.log('listening on port 3001...'))
 
