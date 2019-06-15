@@ -5,7 +5,8 @@ const app = express()
 
 app.get('*', async (req, res, next) => {
   try {
-    const browser = await puppeteer.launch()
+    const args = ['--no-sandbox', '--disable-setuid-sandbox']
+    const browser = await puppeteer.launch({ args })
     const page = await browser.newPage()
     await browser.close()
     res.send('hello')
