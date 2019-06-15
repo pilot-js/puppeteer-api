@@ -58,13 +58,9 @@ const parseHTML = (html, userId) => {
 
 const puppy = async () => {
   const args = ['-–no-sandbox', '-–disable-setuid-sandbox']
-  console.log('set args')
   const browser = await puppeteer.launch({ args })
-  console.log('launched browser.')
   const page = await browser.newPage()
-  console.log('created new page')
   await browser.close()
-  console.log('closed browser')
   return 'hello'
 }
 

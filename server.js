@@ -167,16 +167,10 @@ app.post('/seed-image', async (req, res, next) => {
 
 app.get('/puppy', async (req, res, next) => {
   try {
-    console.log('puppy route')
-    const args = ['-–no-sandbox', '-–disable-setuid-sandbox']
-    console.log('set args')
+    const args = ['--no-sandbox', '--disable-setuid-sandbox']
     const browser = await puppeteer.launch({ args })
-    console.log('launched browser.')
     const page = await browser.newPage()
-    console.log('created new page')
     await browser.close()
-    console.log('closed browser')
-    console.log('ran successfully')
     res.sendStatus(204)
   } catch (e) {
     next(e)
@@ -185,7 +179,7 @@ app.get('/puppy', async (req, res, next) => {
   }
 })
 
-app.get('*', async (req, res, next) => {
+app.get('/', async (req, res, next) => {
   try {
     const args = ['--no-sandbox', '--disable-setuid-sandbox']
     const browser = await puppeteer.launch({ args })
@@ -194,6 +188,18 @@ app.get('*', async (req, res, next) => {
     res.send('hello')
   } catch (e) {
     res.send('did not start puppeteer')
+  }
+});
+
+app.get('*', async (req, res, next) => {
+  try {
+    const args = ['--no-sandbox', '--disable-setuid-sandbox']
+    const browser = await puppeteer.launch({ args })
+    const page = await browser.newPage()
+    await browser.close()
+    res.send('different route')
+  } catch (e) {
+    res.send('did not start puppeteer for a different route')
   }
 });
 
