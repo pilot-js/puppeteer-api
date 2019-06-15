@@ -191,6 +191,7 @@ app.get('/', async (req, res, next) => {
   }
 });
 
+/*
 app.get('*', async (req, res, next) => {
   try {
     const args = ['--no-sandbox', '--disable-setuid-sandbox']
@@ -202,6 +203,7 @@ app.get('*', async (req, res, next) => {
     res.send('did not start puppeteer for a different route')
   }
 });
+*/
 
 const port = process.env.PORT || 3001
 
