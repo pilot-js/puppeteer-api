@@ -29,7 +29,7 @@ app.post('/seed-image', async (req, res, next) => {
     res.send(JSON.stringify(data))
   } catch(e) {
     res.status = 500
-    res.send(e)
+    res.send(JSON.stringify(e))
   }
 })
 
@@ -41,7 +41,7 @@ app.get('/puppy', async (req, res, next) => {
     res.sendStatus(204)
   } catch (e) {
     res.status = 500
-    res.send(e)
+    res.send(JSON.stringify(e))
   }
 })
 
