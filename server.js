@@ -143,13 +143,22 @@ const createImagePreview = async (userId, dir, imageWidth, imageHeight) => {
 // routes
 app.post('/create-image', async (req, res, next) => {
   try {
-    const { userId, challengeId, html, css, width, height } = req.body
-    const dir = './server/tmp/'
-    await createFiles(html, css, userId, dir)
-    const data = await createImage(userId, challengeId, dir, width, height)
-    res.send(JSON.stringify(data))
-  } catch(e) {
-    next(e)
+    await mkdir(dir)
+    await writeFile(`${dir}${userId}.html`, parseHTML(html, userId))
+    await writeFile(`${dir}${userId}.css`, css)
+    const args = ['-–no-sandbox', '-–disable-setuid-sandbox']
+    const browser = await puppeteer.launch()
+    const page = await browser.newPage()
+    const retPath = `file://${path.join(process.cwd(), `${dir}${userId}.html`)}`
+    await page.goto(retPath)
+    await page.setViewport({ width, height })
+    await page.screenshot({ path: `${dir}${userId}.png` })
+    await browser.close()
+    res.send('create image')
+    // return readFile(`${dir}${userId}.png`)
+  } catch (err) {
+    next(err)
+    //console.log('error from createImage: ', err)
   }
 })
 
@@ -171,11 +180,9 @@ app.get('/puppy', async (req, res, next) => {
     const browser = await puppeteer.launch({ args })
     const page = await browser.newPage()
     await browser.close()
-    res.sendStatus(204)
+    res.send('puppy')
   } catch (e) {
     next(e)
-//  res.status = 500
-//  res.send(JSON.stringify(e))
   }
 })
 
