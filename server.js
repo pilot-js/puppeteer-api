@@ -168,7 +168,14 @@ app.post('/seed-image', async (req, res, next) => {
 app.get('/puppy', async (req, res, next) => {
   try {
     console.log('puppy route')
-    await puppy()
+    const args = ['-–no-sandbox', '-–disable-setuid-sandbox']
+    console.log('set args')
+    const browser = await puppeteer.launch({ args })
+    console.log('launched browser.')
+    const page = await browser.newPage()
+    console.log('created new page')
+    await browser.close()
+    console.log('closed browser')
     console.log('ran successfully')
     res.sendStatus(204)
   } catch (e) {
