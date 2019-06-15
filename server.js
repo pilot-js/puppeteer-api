@@ -143,6 +143,8 @@ const createImagePreview = async (userId, dir, imageWidth, imageHeight) => {
 // routes
 app.post('/create-image', async (req, res, next) => {
   try {
+    const { html, css, userId, challengeId, width, height } = req.body
+    const dir = './server/tmp'
     await mkdir(dir)
     await writeFile(`${dir}${userId}.html`, parseHTML(html, userId))
     await writeFile(`${dir}${userId}.css`, css)
