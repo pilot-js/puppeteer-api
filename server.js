@@ -175,7 +175,7 @@ app.post('/seed-image', async (req, res, next) => {
     const page = await browser.newPage()
     const retPath = `file://${path.join(process.cwd(), `${dir}${userId}.html`)}`
     await page.goto(retPath)
-    await page.setViewport({ 600, 337 })
+    await page.setViewport({ width: 600, height: 337 })
     await page.screenshot({ path: `${dir}${userId}.png` })
     await browser.close()
     const data = readFile(`${dir}${userId}.png`)
