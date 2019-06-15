@@ -1,6 +1,6 @@
 const express = require('express')
 const puppeteer = require('puppeteer')
-// const utils = require('./puppeteer-utils')
+const utils = require('./puppeteer-utils')
 const path = require('path')
 
 const app = express()
