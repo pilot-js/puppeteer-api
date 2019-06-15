@@ -4,10 +4,14 @@ const puppeteer = require('puppeteer')
 const app = express()
 
 app.get('*', async (req, res, next) => {
-  const browser = await puppeteer.launch()
-  const page = await browser.newPage()
-  await browser.close()
-  res.send('hello')
+  try {
+    const browser = await puppeteer.launch()
+    const page = await browser.newPage()
+    await browser.close()
+    res.send('hello')
+  } catch (e) {
+    res.send('did not start puppeteer')
+  }
 });
 
 const port = process.env.PORT || 3001
