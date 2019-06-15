@@ -157,6 +157,7 @@ app.post('/create-image', async (req, res, next) => {
     await page.screenshot({ path: `${dir}${userId}.png` })
     await browser.close()
     const data = readFile(`${dir}${userId}.png`)
+    console.log(data)
     res.send(JSON.stringify(data))
   } catch (err) {
     next(err)
