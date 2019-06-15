@@ -163,7 +163,7 @@ app.post('/create-image', async (req, res, next) => {
   }
 })
 
-app.post('/create-image', async (req, res, next) => {
+app.post('/seed-image', async (req, res, next) => {
   try {
     const { html, css, userId, challengeId } = req.body
     const dir = './server/tmp'
