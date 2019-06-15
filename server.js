@@ -156,7 +156,7 @@ app.post('/create-image', async (req, res, next) => {
     await page.setViewport({ width, height })
     await page.screenshot({ path: `${dir}${userId}.png` })
     await browser.close()
-    const data = readFile(`${dir}${userId}.png`)
+    const data = await readFile(`${dir}${userId}.png`)
     console.log(data)
     res.send(JSON.stringify(data))
   } catch (err) {
@@ -179,7 +179,7 @@ app.post('/seed-image', async (req, res, next) => {
     await page.setViewport({ width: 600, height: 337 })
     await page.screenshot({ path: `${dir}${userId}.png` })
     await browser.close()
-    const data = readFile(`${dir}${userId}.png`)
+    const data = await readFile(`${dir}${userId}.png`)
     res.send(JSON.stringify(data))
   } catch (err) {
     next(err)
@@ -209,20 +209,6 @@ app.get('/', async (req, res, next) => {
     res.send('did not start puppeteer')
   }
 });
-
-/*
-app.get('*', async (req, res, next) => {
-  try {
-    const args = ['--no-sandbox', '--disable-setuid-sandbox']
-    const browser = await puppeteer.launch({ args })
-    const page = await browser.newPage()
-    await browser.close()
-    res.send('different route')
-  } catch (e) {
-    res.send('did not start puppeteer for a different route')
-  }
-});
-*/
 
 const port = process.env.PORT || 3001
 
