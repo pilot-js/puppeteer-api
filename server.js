@@ -148,7 +148,7 @@ app.post('/create-image', async (req, res, next) => {
     await mkdir(dir)
     await writeFile(`${dir}${userId}.html`, parseHTML(html, userId))
     await writeFile(`${dir}${userId}.css`, css)
-    const args = ['-–no-sandbox', '-–disable-setuid-sandbox']
+    const args = ['--no-sandbox', '--disable-setuid-sandbox']
     const browser = await puppeteer.launch()
     const page = await browser.newPage()
     const retPath = `file://${path.join(process.cwd(), `${dir}${userId}.html`)}`
