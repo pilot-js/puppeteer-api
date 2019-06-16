@@ -92,7 +92,7 @@ app.post('/compare-images', async (req, res, next) => {
     await mkdir(dir)
     // create userchallenge image
     const userchallengeFileName = `${userId}-${userchallenge.id}`
-    await writeFile(`${dir}${userchallengeFileName}.html`, parseHTML(userchallenge.html, userId))
+    await writeFile(`${dir}${userchallengeFileName}.html`, parseHTML(userchallenge.html, userchallengeFileName))
     await writeFile(`${dir}${userchallengeFileName}.css`, userchallenge.css)
     const args = ['--no-sandbox', '--disable-setuid-sandbox']
     const browser = await puppeteer.launch({ args })
@@ -102,7 +102,7 @@ app.post('/compare-images', async (req, res, next) => {
     await userchallengePage.screenshot({ path: `${dir}${userchallengeFileName}.png` })
     // create challenge image
     const challengeFileName = `${userId}-${challenge.id}`
-    await writeFile(`${dir}${challengeFileName}.html`, parseHTML(challenge.solutions[0].html, userId))
+    await writeFile(`${dir}${challengeFileName}.html`, parseHTML(challenge.solutions[0].html, challengeFileName))
     await writeFile(`${dir}${challengeFileName}.css`, challenge.solutions[0].css)
     const challengePage = await browser.newPage()
     await challengePage.goto(`file://${dir}${challengeFileName}.html`)
