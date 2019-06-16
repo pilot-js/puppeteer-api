@@ -3,6 +3,7 @@ const puppeteer = require('puppeteer')
 const utils = require('./puppeteer-utils')
 const path = require('path')
 const fs = require('fs')
+const { convertBufferToImgSrc } = require('./utils')
 
 const app = express()
 
@@ -63,64 +64,6 @@ const parseHTML = (html, userId) => {
   </html>`
 }
 
-const puppy = async () => {
-  const args = ['-–no-sandbox', '-–disable-setuid-sandbox']
-  console.log('set args')
-  const browser = await puppeteer.launch({ args })
-  console.log('launched browser.')
-  const page = await browser.newPage()
-  console.log('created new page')
-  await browser.close()
-  console.log('closed browser')
-  return 'hello'
-}
-
-const createFiles = async (html, css, userId, dir) => {
-  await mkdir(dir)
-  await writeFile(`${dir}${userId}.html`, parseHTML(html, userId))
-  await writeFile(`${dir}${userId}.css`, css)
-}
-
-const createImage = async (userId, challengeId, dir, width, height) => {
-  try {
-    // const image = await Image.findOne({ where: { challengeId } });
-    const args = ['-–no-sandbox', '-–disable-setuid-sandbox']
-    const browser = await puppeteer.launch()
-    const page = await browser.newPage()
-    const retPath = `file://${path.join(process.cwd(), `${dir}${userId}.html`)}`
-    await page.goto(retPath)
-    await page.setViewport({ width, height })
-    await page.screenshot({ path: `${dir}${userId}.png` })
-    await browser.close()
-    return readFile(`${dir}${userId}.png`)
-  } catch (err) {
-    console.log('error from createImage: ', err)
-  }
-}
-
-const seedImage = async (fileName, dir) => {
-  try {
-    const args = ['-–no-sandbox', '-–disable-setuid-sandbox']
-    const browser = await puppeteer.launch()
-    const page = await browser.newPage()
-    const retPath = `file://${path.join(process.cwd(), `${dir}${fileName}.html`)}`
-    await page.goto(retPath)
-    await page.setViewport({ width: 600, height: 337 })
-    await page.screenshot({ path: `${dir}${fileName}.png` })
-    await browser.close()
-    return retPath
-  } catch (err) {
-    console.log('error from seedImage: ', err)
-  }
-}
-
-const createFilesAndImage = async (html, css, dir, userId, challengeId, width, height) => {
-  await createFiles(html, css, userId, dir)
-  console.log('made files')
-  const data = await createImage(userId,  challengeId, dir, width, height)
-  return data
-}
-
 // /******  PREVIEW ******/
 
 const createImagePreview = async (userId, dir, imageWidth, imageHeight) => {
@@ -144,43 +87,47 @@ const createImagePreview = async (userId, dir, imageWidth, imageHeight) => {
 app.post('/create-image', async (req, res, next) => {
   try {
     const { html, css, userId, challengeId, width, height } = req.body
-    const dir = './server/tmp'
+    const dir = path.join(__dirname,'./tmp/')
     await mkdir(dir)
     await writeFile(`${dir}${userId}.html`, parseHTML(html, userId))
     await writeFile(`${dir}${userId}.css`, css)
     const args = ['--no-sandbox', '--disable-setuid-sandbox']
     const browser = await puppeteer.launch({ args })
     const page = await browser.newPage()
-    const retPath = `file://${path.join(process.cwd(), `${dir}${userId}.html`)}`
-    await page.goto(retPath)
+    await page.goto(`file://${dir}${userId}.html`)
     await page.setViewport({ width, height })
     await page.screenshot({ path: `${dir}${userId}.png` })
     await browser.close()
     const data = await readFile(`${dir}${userId}.png`)
-    console.log(data)
-    res.send(JSON.stringify(data))
+    const obj = JSON.parse(JSON.stringify(data))
+    const src = convertBufferToImgSrc(obj)
+    console.log(src)
+    res.send(src)
   } catch (err) {
     next(err)
   }
 })
 
+const DEFAULT_WIDTH = 600
+const DEFAULT_HEIGHT = 337
+
 app.post('/seed-image', async (req, res, next) => {
   try {
     const { html, css, userId, challengeId } = req.body
-    const dir = './server/tmp'
+    const dir = path.join(__dirname,'./tmp/')
     await mkdir(dir)
     await writeFile(`${dir}${userId}.html`, parseHTML(html, userId))
     await writeFile(`${dir}${userId}.css`, css)
     const args = ['--no-sandbox', '--disable-setuid-sandbox']
     const browser = await puppeteer.launch({ args })
     const page = await browser.newPage()
-    const retPath = `file://${path.join(process.cwd(), `${dir}${userId}.html`)}`
-    await page.goto(retPath)
-    await page.setViewport({ width: 600, height: 337 })
-    await page.screenshot({ path: `${dir}${userId}.png` })
+    await page.goto(`file://${dir}${userId}.html`)
+    await page.setViewport({ width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT })
     await browser.close()
     const data = await readFile(`${dir}${userId}.png`)
-    res.send(JSON.stringify(data))
+    const obj = JSON.parse(JSON.stringify(data))
+    const src = convertBufferToImgSrc(obj)
+    res.send(src)
   } catch (err) {
     next(err)
   }
