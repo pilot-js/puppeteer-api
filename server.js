@@ -29,14 +29,17 @@ const createImagePreview = async (userId, dir, imageWidth, imageHeight) => {
   }
 }
 
-// routes
+////////////////
+//// routes ////
+////////////////
+
 app.post('/create-image', async (req, res, next) => {
   try {
     const { html, css, userId, challengeId, width, height } = req.body
     const dir = path.join(__dirname, './tmp/')
     const fileName = `${userId}-${challengeId}`
     await mkdir(dir)
-    await writeFile(`${dir}${fileName}.html`, parseHTML(html, userId))
+    await writeFile(`${dir}${fileName}.html`, parseHTML(html, fileName))
     await writeFile(`${dir}${fileName}.css`, css)
     const args = ['--no-sandbox', '--disable-setuid-sandbox']
     const browser = await puppeteer.launch({ args })
@@ -63,15 +66,17 @@ app.post('/seed-image', async (req, res, next) => {
     const { html, css, userId, challengeId } = req.body
     const dir = path.join(__dirname, './tmp/')
     await mkdir(dir)
-    await writeFile(`${dir}${userId}.html`, parseHTML(html, userId))
-    await writeFile(`${dir}${userId}.css`, css)
+    const fileName = `${dir}${userId}-${challengeId}`
+    await writeFile(`${fileName}.html`, parseHTML(html, `${userId}-${challengeId}`))
+    await writeFile(`${fileName}.css`, css)
     const args = ['--no-sandbox', '--disable-setuid-sandbox']
     const browser = await puppeteer.launch({ args })
     const page = await browser.newPage()
-    await page.goto(`file://${dir}${userId}.html`)
+    await page.goto(`file://${fileName}.html`)
     await page.setViewport({ width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT })
+    await page.screenshot({ path: `${fileName}.png` })
     await browser.close()
-    const data = await readFile(`${dir}${userId}.png`)
+    const data = await readFile(`${fileName}.png`)
     const obj = JSON.parse(JSON.stringify(data))
     const src = convertBufferToImgSrc(obj)
     res.send(src)
