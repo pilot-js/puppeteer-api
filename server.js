@@ -110,6 +110,7 @@ app.post('/compare-images', async (req, res, next) => {
     await challengePage.screenshot({ path: `${dir}${challengeFileName}.png` })
     await browser.close()
     // compare images
+    console.log(`Comparing userchallenge (${dir}${userchallengeFileName}.png) and challenge (${dir}${challengeFileName}.png)`)
     const percentMatch = await compareImages(
       `${dir}${userchallengeFileName}.png`,
       `${dir}${challengeFileName}.png`,
