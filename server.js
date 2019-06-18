@@ -91,7 +91,7 @@ app.post('/compare-images', async (req, res, next) => {
     const dir = path.join(__dirname, './tmp/')
     await mkdir(dir)
     // create userchallenge image
-    const userchallengeFileName = `${userId}-${userchallenge.id}`
+    const userchallengeFileName = `${userId}-userchallenge-${userchallenge.id}`
     await writeFile(`${dir}${userchallengeFileName}.html`, parseHTML(userchallenge.html, userchallengeFileName))
     await writeFile(`${dir}${userchallengeFileName}.css`, userchallenge.css)
     const args = ['--no-sandbox', '--disable-setuid-sandbox']
@@ -101,7 +101,7 @@ app.post('/compare-images', async (req, res, next) => {
     await userchallengePage.setViewport({ width, height })
     await userchallengePage.screenshot({ path: `${dir}${userchallengeFileName}.png` })
     // create challenge image
-    const challengeFileName = `${userId}-${challenge.id}`
+    const challengeFileName = `${userId}-challenge-${challenge.id}`
     await writeFile(`${dir}${challengeFileName}.html`, parseHTML(challenge.solutions[0].html, challengeFileName))
     await writeFile(`${dir}${challengeFileName}.css`, challenge.solutions[0].css)
     const challengePage = await browser.newPage()
