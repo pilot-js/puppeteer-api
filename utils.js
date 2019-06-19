@@ -9,6 +9,7 @@ const convertBufferToImgSrc = imageBuffer => {
 };
 
 // need html and css for userchallenge and challenge
+
 function compareImages(userchallengePath, challengePath, dir, width, height, userId) {
   // use promise so that can return percentMatch
   return new Promise((resolve, reject) => {
