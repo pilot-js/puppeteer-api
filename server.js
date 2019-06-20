@@ -58,8 +58,8 @@ app.post('/create-image', async (req, res, next) => {
   }
 })
 
-const DEFAULT_WIDTH = 600
-const DEFAULT_HEIGHT = 337
+const DEFAULT_WIDTH = 540
+const DEFAULT_HEIGHT = 304
 
 app.post('/seed-image', async (req, res, next) => {
   try {
